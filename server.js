@@ -9,4 +9,8 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3030;
 
-//
+//================ Routes =======================
+
+
+//=================== Initialization =================
+app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
