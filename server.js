@@ -50,8 +50,20 @@ function Weather(data){
 }
 
 function handleGetParks(req, res){
-  console.log(req);
+  const parkCode = req.query.formatted_query;
+  const url = `https://developer.nps.gov/api/v1/parks?limit=2&start=0&q=${parkCode}&sort=&api_key=${PARKS_API_KEY}`;
+  superagent.get(url).then(stuffThatComesBack => {
+    const output = stuffThatComesBack.body.data.map(park => new Parks(park));
+    console.log(output);
+    res.send(output);
+  });
 }
-
+function Parks(data){
+  this.name = data.fullName;
+  this.address = data.addresses;
+  this.fee = data.fees.cost;
+  this.description = data.description;
+  this.url = data.url;
+}
 //=================== Initialization =================
 app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
