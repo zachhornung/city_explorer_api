@@ -12,12 +12,13 @@ app.use(cors());
 const PORT = process.env.PORT || 3030;
 const LOCATION_API_KEY = process.env.LOCATION_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const PARKS_API_KEY = process.env.PARKS_API_KEY;
 
 //================ Routes =======================
 
 app.get('/location', handleGetLocation);
 app.get('/weather', handleGetWeather);
-
+app.get('/parks', handleGetParks);
 
 function handleGetLocation(req, res){
   const city = req.query.city;
@@ -36,14 +37,11 @@ function Location(dataFromTheFile, cityName){
 
 function handleGetWeather(req, res){
   const cityName = req.query.search_query;
-  // const dataFromTheFile = require('./data/weather.json');
   const url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${cityName}&key=${WEATHER_API_KEY}`;
   superagent.get(url).then(stuffThatComesBack => {
     const output = stuffThatComesBack.body.data.map(day => new Weather(day));
     res.send(output);
   });
-  // const output = dataFromTheFile.data.map(day => new Weather(day));
-  // res.send(output);
 }
 
 function Weather(data){
@@ -51,6 +49,9 @@ function Weather(data){
   this.time = data.datetime;
 }
 
+function handleGetParks(req, res){
+  console.log(req);
+}
 
 //=================== Initialization =================
 app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
