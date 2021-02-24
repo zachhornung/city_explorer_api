@@ -6,9 +6,9 @@ Estimate of time needed to complete: 4 hrs
 
 Start time: 3:26pm
 
-Finish time: 
+Finish time: 8:11pm
 
-Actual time needed to complete: 
+Actual time needed to complete: 5 hours
 
 
 **Author**: Zach Hornung
