@@ -26,6 +26,8 @@ function handleGetLocation(req, res){
   superagent.get(url).then(stuffThatComesBack => {
     const output = new Location(stuffThatComesBack.body, city);
     res.send(output);
+  }).catch(errorThatComesBack => {
+    res.status(500).send(errorThatComesBack);
   });
 }
 function Location(dataFromTheFile, cityName){
@@ -41,6 +43,8 @@ function handleGetWeather(req, res){
   superagent.get(url).then(stuffThatComesBack => {
     const output = stuffThatComesBack.body.data.map(day => new Weather(day));
     res.send(output);
+  }).catch(errorThatComesBack => {
+    res.status(500).send(errorThatComesBack);
   });
 }
 
@@ -54,13 +58,14 @@ function handleGetParks(req, res){
   const url = `https://developer.nps.gov/api/v1/parks?limit=2&start=0&q=${parkCode}&sort=&api_key=${PARKS_API_KEY}`;
   superagent.get(url).then(stuffThatComesBack => {
     const output = stuffThatComesBack.body.data.map(park => new Parks(park));
-    console.log(output);
     res.send(output);
+  }).catch(errorThatComesBack => {
+    res.status(500).send(errorThatComesBack);
   });
 }
 function Parks(data){
   this.name = data.fullName;
-  this.address = data.addresses;
+  this.address = data.addresses[0].line1;
   this.fee = data.fees.cost;
   this.description = data.description;
   this.url = data.url;
