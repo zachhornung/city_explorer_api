@@ -1,14 +1,14 @@
 # city_explorer_api
 
-Number and name of feature: deploy backend and pass tests
+Number and name of feature: get data from the internet
 
-Estimate of time needed to complete: 2 hours
+Estimate of time needed to complete: 4 hrs
 
-Start time: 1:50pm
+Start time: 3:26pm
 
-Finish time: 4:47pm
+Finish time: 8:11pm
 
-Actual time needed to complete: 3hrs
+Actual time needed to complete: 5 hours
 
 
 **Author**: Zach Hornung
