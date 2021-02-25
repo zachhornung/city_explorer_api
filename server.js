@@ -17,12 +17,15 @@ const PORT = process.env.PORT || 3030;
 const LOCATION_API_KEY = process.env.LOCATION_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const PARKS_API_KEY = process.env.PARKS_API_KEY;
+const MOVIES_API_KEY = process.env.MOVIES_API_KEY;
 
 //================ Routes =======================
 
 app.get('/location', handleGetLocation);
 app.get('/weather', handleGetWeather);
 app.get('/parks', handleGetParks);
+app.get('/movies', handleGetMovies);
+
 
 function handleGetLocation(req, res){
   const sqlCheckingString = 'SELECT * FROM cities WHERE search_query=$1';
@@ -30,7 +33,6 @@ function handleGetLocation(req, res){
   client.query(sqlCheckingString, sqlCheckingArray)
     .then(result => {
       if (result.rows.length > 0){
-        console.log(result);
         res.send(result.rows[0]);
       }else {
         const city = req.query.city;
@@ -48,7 +50,6 @@ function handleGetLocation(req, res){
       }
     });
 }
-
 function Location(dataFromTheFile, cityName){
   this.search_query = cityName;
   this.formatted_query = dataFromTheFile[0].display_name;
@@ -66,7 +67,6 @@ function handleGetWeather(req, res){
     res.status(500).send(errorThatComesBack);
   });
 }
-
 function Weather(data){
   this.forecast = data.weather.description;
   this.time = data.datetime;
@@ -89,7 +89,27 @@ function Parks(data){
   this.description = data.description;
   this.url = data.url;
 }
+
+function handleGetMovies(req, res){
+  const url = `https://api.themoviedb.org/3/movie/popular?api_key=${MOVIES_API_KEY}`;
+  superagent.get(url).then(result => {
+    console.log(result);
+    const output = result.body.results.map(movie => new Movies(movie));
+    res.send(output);
+  }).catch(errorThatComesBack => res.status(500).send(errorThatComesBack));
+}
+function Movies(data){
+  this.title = data.original_title;
+  this.overview = data.overview;
+  this.average_votes = data.vote_average;
+  this.total_votes = data.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500/${data.poster_path}`;
+  this.popularity = data.popularity;
+  this.released_on = data.release_date;
+}
+
 //=================== Initialization =================
 client.connect().then(() => {
   app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
 });
+
