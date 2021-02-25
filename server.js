@@ -2,12 +2,16 @@
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
+const pg = require('pg');
 require('dotenv').config();
 
 
 //====================== app ===================
 const app = express();
 app.use(cors());
+const DATABASE_URL = process.env.DATABASE_URL;
+const client = new pg.Client(DATABASE_URL);
+client.on('error', error => console.log(error));
 
 const PORT = process.env.PORT || 3030;
 const LOCATION_API_KEY = process.env.LOCATION_API_KEY;
@@ -21,15 +25,30 @@ app.get('/weather', handleGetWeather);
 app.get('/parks', handleGetParks);
 
 function handleGetLocation(req, res){
-  const city = req.query.city;
-  const url = `https://us1.locationiq.com/v1/search.php?key=${LOCATION_API_KEY}&q=${city}&format=json`;
-  superagent.get(url).then(stuffThatComesBack => {
-    const output = new Location(stuffThatComesBack.body, city);
-    res.send(output);
-  }).catch(errorThatComesBack => {
-    res.status(500).send(errorThatComesBack);
-  });
+  const sqlCheckingString = 'SELECT * FROM cities WHERE search_query=$1';
+  const sqlCheckingArray = [req.query.city];
+  client.query(sqlCheckingString, sqlCheckingArray)
+    .then(result => {
+      if (result.rows.length > 0){
+        console.log(result);
+        res.send(result.rows[0]);
+      }else {
+        const city = req.query.city;
+        const url = `https://us1.locationiq.com/v1/search.php?key=${LOCATION_API_KEY}&q=${city}&format=json`;
+        superagent.get(url).then(stuffThatComesBack => {
+          const output = new Location(stuffThatComesBack.body, city);
+          res.send(output);
+          const sqlString = 'INSERT INTO cities (search_query, formatted_query, latitude, longitude) VALUES($1, $2, $3, $4)';
+          const sqlArray = [city, stuffThatComesBack.body[0].display_name, stuffThatComesBack.body[0].lat, stuffThatComesBack.body[0].lon];
+          client.query(sqlString, sqlArray);
+        }).catch(errorThatComesBack => {
+          console.log(errorThatComesBack);
+          res.status(500).send('something went wrong');
+        });
+      }
+    });
 }
+
 function Location(dataFromTheFile, cityName){
   this.search_query = cityName;
   this.formatted_query = dataFromTheFile[0].display_name;
@@ -71,4 +90,6 @@ function Parks(data){
   this.url = data.url;
 }
 //=================== Initialization =================
-app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
+client.connect().then(() => {
+  app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
+});
