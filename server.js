@@ -18,6 +18,7 @@ const LOCATION_API_KEY = process.env.LOCATION_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const PARKS_API_KEY = process.env.PARKS_API_KEY;
 const MOVIES_API_KEY = process.env.MOVIES_API_KEY;
+const YELP_API_KEY = process.env.YELP_API_KEY;
 
 //================ Routes =======================
 
@@ -25,7 +26,7 @@ app.get('/location', handleGetLocation);
 app.get('/weather', handleGetWeather);
 app.get('/parks', handleGetParks);
 app.get('/movies', handleGetMovies);
-
+app.get('/yelp', handleGetYelp);
 
 function handleGetLocation(req, res){
   const sqlCheckingString = 'SELECT * FROM cities WHERE search_query=$1';
@@ -93,7 +94,6 @@ function Parks(data){
 function handleGetMovies(req, res){
   const url = `https://api.themoviedb.org/3/movie/popular?api_key=${MOVIES_API_KEY}`;
   superagent.get(url).then(result => {
-    console.log(result);
     const output = result.body.results.map(movie => new Movies(movie));
     res.send(output);
   }).catch(errorThatComesBack => res.status(500).send(errorThatComesBack));
@@ -108,6 +108,21 @@ function Movies(data){
   this.released_on = data.release_date;
 }
 
+function handleGetYelp(req, res){
+  const url = `https://api.yelp.com/v3/businesses/search?term=restaurant&latitude=${req.query.latitude}&longitude=${req.query.longitude}`;
+  superagent.get(url).set('authorization', `bearer ${YELP_API_KEY}`).then(result => {
+    console.log(result.body.businesses);
+    const output = result.body.businesses.map(business => new Businesses(business));
+    res.send(output);
+  }).catch(errorThatComesBack => res.status(500).send(errorThatComesBack));
+}
+function Businesses(data){
+  this.name = data.name;
+  this.image_url = data.image_url;
+  this.price = data.price;
+  this.rating = data.rating;
+  this.url = data.url;
+}
 //=================== Initialization =================
 client.connect().then(() => {
   app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
