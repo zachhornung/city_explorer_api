@@ -10,7 +10,6 @@ Finish time: 3:40pm
 
 Actual time needed to complete: 1.5 hours
 
-
 **Author**: Zach Hornung
 **Version**: 1.0.0
 
