@@ -4,11 +4,11 @@ Number and name of feature: get data from the internet
 
 Estimate of time needed to complete: 4 hrs
 
-Start time: 3:26pm
+Start time: 2:16pm
 
-Finish time: 8:11pm
+Finish time: 4:30pm
 
-Actual time needed to complete: 5 hours
+Actual time needed to complete: 2.5 hours
 
 
 **Author**: Zach Hornung
