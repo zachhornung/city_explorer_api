@@ -1,14 +1,14 @@
 # city_explorer_api
 
-Number and name of feature: get data from the internet
+Number and name of feature: make 2 more paths
 
 Estimate of time needed to complete: 4 hrs
 
 Start time: 2:16pm
 
-Finish time: 4:30pm
+Finish time: 3:40pm
 
-Actual time needed to complete: 2.5 hours
+Actual time needed to complete: 1.5 hours
 
 
 **Author**: Zach Hornung
