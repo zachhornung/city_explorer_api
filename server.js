@@ -127,4 +127,3 @@ function Businesses(data){
 client.connect().then(() => {
   app.listen(PORT, () => console.log(`app is up on port http://localhost:${PORT}`));
 });
-
