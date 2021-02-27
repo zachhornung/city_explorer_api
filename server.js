@@ -112,7 +112,6 @@ function handleGetYelp(req, res){
   const offset = (req.query.page -1) * 5;
   const url = `https://api.yelp.com/v3/businesses/search?term=restaurant&limit=5&latitude=${req.query.latitude}&longitude=${req.query.longitude}&offset=${offset}`;
   superagent.get(url).set('authorization', `bearer ${YELP_API_KEY}`).then(result => {
-    console.log(result.body.businesses);
     const output = result.body.businesses.map(business => new Businesses(business));
     res.send(output);
   }).catch(errorThatComesBack => res.status(500).send(errorThatComesBack));
